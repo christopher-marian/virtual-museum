@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>AR Museum Guide — Explore History in Your Space</title>
+  <meta name="description" content="Immersive WebAR Museum Guide. Inspect ancient classical artifacts and dinosaur fossils in real-world augmented reality." />
+  
+  <!-- Google Fonts: Cinzel & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  
+  <!-- Google model-viewer Web Component -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand-logo">
+        <span class="gold-symbol">&#9670;</span>
+        <div class="brand-text">
+          <span class="brand-title">AR MUSEUM GUIDE</span>
+          <span class="brand-subtitle">WEB-BASED AUGMENTED REALITY</span>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <a href="#hero" class="nav-link active">Home</a>
+        <a href="#viewer-section" class="nav-link">3D Viewer</a>
+        <a href="#gallery-section" class="nav-link">Exhibits</a>
+        <a href="#about-section" class="nav-link">About AR</a>
+        <a href="../" class="nav-link nav-btn-museum" title="Return to 3D Virtual Museum walkthrough">
+          <span class="gold-symbol">&#127963;</span> 3D Virtual Museum
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero-section">
+    <div class="hero-backdrop"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-tag">ARCHAEOLOGICAL COLLECTION &amp; ARTIFACTS</div>
+      <h1 class="hero-title">EXPLORE HISTORY<br /><span class="gold-gradient">IN YOUR SPACE</span></h1>
+      <p class="hero-description">
+        Step into the past with cutting-edge WebAR. Inspect classical antiquity masterpieces, 
+        ancient pottery, and apex predator fossils anchored directly onto your table or floor with real-world proportions.
+      </p>
+      <div class="hero-actions">
+        <a href="#viewer-section" class="btn btn-primary">
+          <span class="btn-icon">&#128065;</span> EXPLORE EXHIBITS
+        </a>
+        <a href="../" class="btn btn-secondary">
+          <span class="btn-icon">&#127963;</span> ENTER 3D VIRTUAL MUSEUM
+        </a>
+        <a href="#about-section" class="btn btn-secondary">
+          <span class="btn-icon">&#9432;</span> HOW AR WORKS
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Viewer & Inspection Section -->
+  <section id="viewer-section" class="viewer-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">INTERACTIVE AR &amp; 3D INSPECTION</span>
+        <h2 class="section-title">FEATURED ARTIFACT VIEWER</h2>
+        <div class="gold-divider"><span>&#9670;</span></div>
+      </div>
+
+      <div class="viewer-layout">
+        <!-- 3D Model Viewer Canvas -->
+        <div class="viewer-viewport-card">
+          <div class="viewer-wrapper">
+            <!-- model-viewer Web Component -->
+            <model-viewer
+              id="artifact-viewer"
+              src="models/ancient_coins.glb"
+              ar
+              ar-modes="webxr scene-viewer quick-look"
+              ar-scale="auto"
+              camera-controls
+              auto-rotate
+              rotation-per-second="25deg"
+              shadow-intensity="1.6"
+              shadow-softness="0.75"
+              exposure="1.0"
+              environment-image="neutral"
+              interaction-prompt="auto"
+              touch-action="pan-y">
+              
+              <!-- Custom AR Launch Button -->
+              <button slot="ar-button" id="ar-launch-btn" class="ar-floating-btn">
+                <span class="ar-icon">&#9635;</span> VIEW IN YOUR SPACE
+              </button>
+
+              <!-- Loading Progress Indicator -->
+              <div slot="progress-bar" class="viewer-loader" id="viewer-loader">
+                <div class="spinner"></div>
+                <span id="loading-text">Loading 3D Artifact...</span>
+              </div>
+
+              <!-- Error State -->
+              <div id="viewer-error-banner" class="viewer-error-banner" style="display: none;">
+                <span>Failed to load 3D model. Please check connection.</span>
+              </div>
+            </model-viewer>
+
+            <!-- Viewer Control Bar -->
+            <div class="viewer-toolbar">
+              <button id="btn-reset-view" class="tool-btn" title="Reset Camera View">
+                <span class="tool-icon">&#8635;</span> Reset View
+              </button>
+              <button id="btn-toggle-rotate" class="tool-btn active" title="Toggle Auto-Rotation">
+                <span class="tool-icon">&#8645;</span> Auto-Rotate
+              </button>
+              <button id="btn-fullscreen" class="tool-btn" title="Toggle Fullscreen">
+                <span class="tool-icon">&#9974;</span> Fullscreen
+              </button>
+            </div>
+          </div>
+
+          <!-- AR Device Status & Instruction Bar -->
+          <div class="ar-status-card" id="ar-status-card">
+            <div class="ar-status-header">
+              <span class="status-indicator" id="ar-status-indicator"></span>
+              <strong id="ar-status-title">AR Capability Detection</strong>
+            </div>
+            <p id="ar-status-desc" class="ar-status-desc">
+              Checking device compatibility for WebXR, Google Scene Viewer, and Apple Quick Look...
+            </p>
+          </div>
+        </div>
+
+        <!-- Curatorial Information Panel -->
+        <aside class="exhibit-info-panel">
+          <div class="panel-inner">
+            <div class="panel-badge-row">
+              <span class="exhibit-badge" id="info-era-badge">Era Loading</span>
+              <span class="exhibit-scale-tag" id="info-scale-badge">Scale: 1:1 AR Metric</span>
+            </div>
+
+            <h3 class="exhibit-title" id="info-title">Ancient Greek &amp; Roman Coinage</h3>
+            <div class="info-divider"></div>
+
+            <div class="meta-grid">
+              <div class="meta-item">
+                <span class="meta-label">ERA &amp; PERIOD</span>
+                <span class="meta-value" id="info-era">c. 450 BCE – 14 CE (Classical Antiquity)</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">ORIGIN &amp; PROVENANCE</span>
+                <span class="meta-value" id="info-origin">Athens, Attica &amp; Imperial Rome</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">MEDIUM &amp; MATERIAL</span>
+                <span class="meta-value" id="info-medium">Struck Silver, Gold &amp; Bronze Alloys</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">REAL-WORLD SIZE</span>
+                <span class="meta-value" id="info-dimensions">0.45m x 0.20m x 0.32m</span>
+              </div>
+            </div>
+
+            <div class="curatorial-essay">
+              <span class="essay-heading">HISTORICAL CURATORIAL ESSAY</span>
+              <p id="info-description">
+                This numismatic assembly features authentic minted currency of the ancient Mediterranean. 
+                The centerpiece is an Athenian Silver Tetradrachm, famously stamped with the owl of Athena holding 
+                an olive sprig and crescent moon—the international trade standard of the classical era. Flanking it are 
+                Roman gold Aurei of Emperor Augustus and Alexander the Great staters, illustrating the mastery of ancient relief 
+                die-engraving and economic power.
+              </p>
+            </div>
+
+            <div class="ar-guidance-box">
+              <span class="guidance-title"><span class="gold-icon">&#10022;</span> AR PLACEMENT TIP</span>
+              <p>
+                Point your mobile camera toward an illuminated, textured horizontal surface (such as a table or floor). 
+                Once detected, tap to place the artifact and walk around it in full 360 degrees.
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Exhibit Cards Gallery Section -->
+  <section id="gallery-section" class="gallery-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">COLLECTION SELECTOR</span>
+        <h2 class="section-title">THE FIVE MAIN EXHIBITS</h2>
+        <p class="section-subtitle">Select any exhibit below to load its 3D model and view its historical curatorial essay.</p>
+        <div class="gold-divider"><span>&#9670;</span></div>
+      </div>
+
+      <div class="cards-grid">
+        <!-- Card 1 -->
+        <div class="exhibit-card active" data-index="0" data-model="ancient_coins.glb">
+          <div class="card-thumb-wrap">
+            <img src="previews/preview_ancient_coins.png" alt="Ancient Coins" class="card-thumb" />
+            <span class="card-pill">Exhibit 01</span>
+          </div>
+          <div class="card-body">
+            <span class="card-era">450 BCE – 14 CE</span>
+            <h4 class="card-title">Ancient Greek &amp; Roman Coins</h4>
+            <p class="card-snippet">Athenian silver tetradrachms and Augustan imperial aurei minted during classical antiquity.</p>
+            <button class="card-select-btn">Inspect in 3D / AR &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="exhibit-card" data-index="1" data-model="ancient_pottery.glb">
+          <div class="card-thumb-wrap">
+            <img src="previews/preview_ancient_pottery.png" alt="Attic Amphora" class="card-thumb" />
+            <span class="card-pill">Exhibit 02</span>
+          </div>
+          <div class="card-body">
+            <span class="card-era">c. 530 BCE</span>
+            <h4 class="card-title">Attic Black-Figure Amphora</h4>
+            <p class="card-snippet">Ceramic vessel with Greek geometric meander motifs and mythological black slip artwork.</p>
+            <button class="card-select-btn">Inspect in 3D / AR &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="exhibit-card" data-index="2" data-model="dinosaur_fossil.glb">
+          <div class="card-thumb-wrap">
+            <img src="previews/preview_dinosaur_fossil.png" alt="Dinosaur Fossil Skull" class="card-thumb" />
+            <span class="card-pill">Exhibit 03</span>
+          </div>
+          <div class="card-body">
+            <span class="card-era">Late Cretaceous (~66 Ma)</span>
+            <h4 class="card-title">Tyrannosaurus Rex Fossil</h4>
+            <p class="card-snippet">Hell Creek cranial fossil with 30cm serrated dentition and bone-crushing jaw fenestrae.</p>
+            <button class="card-select-btn">Inspect in 3D / AR &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="exhibit-card" data-index="3" data-model="nefertiti.glb">
+          <div class="card-thumb-wrap">
+            <img src="previews/preview_nefertiti.png" alt="Bust of Queen Nefertiti" class="card-thumb" />
+            <span class="card-pill">Exhibit 04</span>
+          </div>
+          <div class="card-body">
+            <span class="card-era">c. 1345 BCE (18th Dynasty)</span>
+            <h4 class="card-title">Bust of Queen Nefertiti</h4>
+            <p class="card-snippet">Amarna royal portrait bust with iconic tall khepresh crown and naturalistic facial symmetry.</p>
+            <button class="card-select-btn">Inspect in 3D / AR &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="exhibit-card" data-index="4" data-model="discus_thrower.glb">
+          <div class="card-thumb-wrap">
+            <img src="previews/preview_discus_thrower.png" alt="The Discobolus" class="card-thumb" />
+            <span class="card-pill">Exhibit 05</span>
+          </div>
+          <div class="card-body">
+            <span class="card-era">c. 460–450 BCE</span>
+            <h4 class="card-title">Discobolus of Myron</h4>
+            <p class="card-snippet">Classical Greek sculpture embodying rhythmic equilibrium, athletic tension, and physical mastery.</p>
+            <button class="card-select-btn">Inspect in 3D / AR &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About AR Technology Section -->
+  <section id="about-section" class="about-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">DEVICE COMPATIBILITY GUIDE</span>
+        <h2 class="section-title">HOW WEBAR WORKS</h2>
+        <div class="gold-divider"><span>&#9670;</span></div>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-icon">&#128241;</div>
+          <h4>Android Devices</h4>
+          <p>
+            Powered by <strong>Google Play Services for AR (ARCore)</strong> and <strong>Google Scene Viewer</strong>. 
+            Supported Chrome and Android browser visitors can place artifacts with surface tracking and automatic lighting.
+          </p>
+        </div>
+
+        <div class="about-card">
+          <div class="about-icon">&#127822;</div>
+          <h4>Apple iOS (iPhone &amp; iPad)</h4>
+          <p>
+            Powered by <strong>Apple ARKit &amp; Quick Look</strong> in Safari and iOS browsers. 
+            Artifacts render seamlessly in real-world space with true-to-scale dimensional anchoring.
+          </p>
+        </div>
+
+        <div class="about-card">
+          <div class="about-icon">&#128187;</div>
+          <h4>Desktop &amp; Laptop Computers</h4>
+          <p>
+            Desktop browsers lack camera-based spatial tracking sensors. However, desktop visitors enjoy the 
+            <strong>Interactive 3D Turntable</strong> with full 360&deg; pan, pitch, and zoom inspection.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="gold-symbol">&#9670;</span>
+        <span class="footer-title">AR MUSEUM GUIDE</span>
+      </div>
+      <p class="footer-tagline">Explore History. Experience Art. Discover the Past.</p>
+      <div class="footer-divider"></div>
+      <p class="footer-copyright">
+        Virtual Museum WebAR &copy; 2026. Built with Google model-viewer &amp; glTF 2.0 PBR Assets.
+      </p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
