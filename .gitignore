@@ -1,0 +1,7 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Unity Burst Debug Information (Do Not Ship)
+*_BurstDebugInformation_DoNotShip/
